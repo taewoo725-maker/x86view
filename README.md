@@ -3,7 +3,7 @@
 **A SCREEN-mode picture viewer for MSX2 / MSX2+ / MSX turbo R, running under MSX-DOS 2 / Nextor.**
 **MSX2 이상 · MSX-DOS2 용 SCREEN 그림 뷰어**
 
-Version **V1.0.9** · `X86VIEW.COM` (about 7.7 KB)
+Version **V1.0.10** · `X86VIEW.COM` (about 8 KB)
 
 ![File browser](docs/browser.png)
 
@@ -60,6 +60,8 @@ Files saved with `BSAVE "name",0,end,S` (7-byte header `FEh`) or raw VRAM dumps 
 | `.SCB` `.SRB` `.S11` | 11 | 256x212 | YJK + RGB | at `FA80h` |
 | `.SCC` `.SRC` `.GEC` `.S12` | 12 | 256x212 | 19268 (YJK) | - |
 
+If a SCREEN 5/6/7 file has no palette inside, the first 32 bytes of a file with the same name and extension `.PL5` / `.PL6` / `.PL7` (Graph Saurus style) are used. Graph Saurus *packed* files (first byte `FDh`) are not supported yet and are reported as "Packed file (FD)".
+
 Unknown extensions are hidden; press `A` to show all files. The mode is guessed from the file size, and `M` in the viewer re-interprets the picture as another SCREEN mode.
 
 ### Usage
@@ -79,7 +81,7 @@ X86VIEW /?                help
 | `[` `]` | page up / down |
 | HOME | first entry |
 | Enter / Right | view picture / open folder |
-| Left / BS | parent folder |
+| Left / BS | parent folder (the folder you came from stays selected) |
 | Space | slideshow from the selected picture |
 | D | next drive |
 | A | show / hide non-picture files |
@@ -151,6 +153,8 @@ MSX2 이상, MSX-DOS2 또는 Nextor, VRAM 128KB. SCREEN 10~12 그림은 MSX2+ / 
 ### 호환성
 
 X86VIEW 는 표준 MSX2 / MSX2+ / MSX turbo R 인터페이스(슬롯 호출을 통한 BIOS, MSX-DOS 2 기능, 표준 VDP 포트와 레지스터)만 쓰고 기종마다 다른 방법은 쓰지 않습니다. 그래서 MSX-DOS 2 / Nextor 가 있고 VRAM 이 128KB 인 **MSX2 이상의 모든 MSX 와 에뮬레이터**(X86MSX, openMSX, blueMSX, MSXPLAYer 등, 실기 포함)에서 돌아가도록 만들었습니다. MSX1 은 V9938 이 없어서 실행되지 않고 안내만 하고 끝납니다. 확인은 아직 작성자의 시험기와 X86MSX(turbo R GT)에서만 했습니다.
+
+팔레트가 파일에 없는 SCREEN 5/6/7 그림은 같은 이름의 `.PL5` / `.PL6` / `.PL7` 파일(그래프 사우루스 방식) 앞 32바이트를 팔레트로 씁니다. 그래프 사우루스의 압축 파일(첫 바이트 `FDh`)은 아직 지원하지 않고 "Packed file (FD)"로 알려 줍니다.
 
 ### 쓰는 법
 

@@ -3,7 +3,7 @@ m_mem:   db 'Not enough memory.',13,10,'$'
 m_dos:   db 'X86VIEW needs MSX-DOS 2 or later.',13,10,'$'
 m_vram:  db 'X86VIEW needs 128KB VRAM (SCREEN 7).',13,10,'$'
 m_msx:   db 'X86VIEW needs MSX2 or later.',13,10,'$'
-m_usage: db 'X86VIEW 1.0.9 - picture viewer for MSX2/2+ (SCREEN 2-8,10-12)',13,10
+m_usage: db 'X86VIEW 1.0.10 - picture viewer for MSX2/2+ (SCREEN 2-8,10-12)',13,10
          db 'Usage: X86VIEW [drive:][path][file]',13,10
          db 13,10
          db 'Browser : Up/Down select, Enter view/open, Space slideshow',13,10
@@ -34,6 +34,7 @@ s_pdef:  db 'MSX default',0
 s_fixed: db 'Fixed',0
 m_open:  db 'Cannot open the file',0
 m_bad:   db 'Bad picture file',0
+m_pack:  db 'Packed file (FD)',0
 m_needp: db 'Needs MSX2+ (V9958)',0
 m_cderr: db 'Cannot open folder',0
 m_rderr: db 'Cannot read drive',0

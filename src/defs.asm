@@ -116,6 +116,8 @@ TMPW2   equ VARS+122
 EXTRA   equ VARS+124
 OLDCPU  equ VARS+126
 DETD    equ VARS+127
+UPF     equ VARS+128
+NAMEBUF equ VARS+130
 
 NT      equ 8100h
 TT      equ 8120h

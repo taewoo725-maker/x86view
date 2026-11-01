@@ -211,7 +211,16 @@ k_enter:
         ld a,(hl)
         cp 2
         jp nc,view_start
-ke_dir: inc hl
+ke_dir: or a
+        push hl
+        jr nz,ke_nu
+        call savecur
+        ld a,1
+        jr ke_su
+ke_nu:  xor a
+ke_su:  ld (UPF),a
+        pop hl
+        inc hl
         inc hl
         ex de,hl
 ke_cd:  ld c,5Ah
@@ -223,6 +232,11 @@ ke_cd:  ld c,5Ah
         call dd_hint
         jp brw_loop
 ke_ok:  call scan
+        ld a,(UPF)
+        or a
+        call nz,selname
+        xor a
+        ld (UPF),a
         call post_scan
         jp brw_loop
 
@@ -248,6 +262,9 @@ k_parent:
         ld a,(hl)
         or a
         jp nz,brw_loop
+        call savecur
+        ld a,1
+        ld (UPF),a
         ld de,s_dotdot
         jr ke_cd
 
@@ -425,6 +442,7 @@ vs_back:
         ld (SLIDE),a
         call setup_ui
         call fix_top
+        call c,centertop
         call draw_all
         call enascr
         jp brw_loop
@@ -605,6 +623,8 @@ li_op:  ld a,b
         ld c,48h
         call BDOS
         ld a,(HDR)
+        cp 0FDh
+        jr z,li_pack
         cp 0FEh
         jr nz,li_raw
         ld hl,(HDR+3)
@@ -657,6 +677,11 @@ li_hok: ld hl,(HLEN)
         ld a,h
         or l
         jr nz,li_len
+li_pack: call li_close
+        ld hl,m_pack
+        ld (ERRP),hl
+        scf
+        ret
 li_bad: call li_close
         ld hl,m_bad
         ld (ERRP),hl
@@ -808,18 +833,75 @@ li_done:
         or a
         sbc hl,de
         jr c,li_pc
-        jr nz,li_np
+        jr nz,li_nopal
 li_pc:  ld hl,(MPAL)
         ld de,(HSTART)
         or a
         sbc hl,de
-        jr c,li_np
+        jr c,li_nopal
         ld hl,PALBUF
         call setpal
+        jr li_np
+li_nopal:
+        call tryplfile
 li_np:  call enascr
         call li_close
         or a
         ret
+
+; palette in a separate file NAME.PLn (Graph Saurus): first 32 bytes
+tryplfile:
+        ld hl,(CURENT)
+        inc hl
+        inc hl
+        ld de,STRBUF
+tp_c:   ld a,(hl)
+        or a
+        ret z
+        cp '.'
+        jr z,tp_dot
+        ld (de),a
+        inc hl
+        inc de
+        jr tp_c
+tp_dot: ld a,'.'
+        ld (de),a
+        inc de
+        ld a,'P'
+        ld (de),a
+        inc de
+        ld a,'L'
+        ld (de),a
+        inc de
+tp_e:   ld a,(hl)
+        inc hl
+        or a
+        jr nz,tp_e
+        dec hl
+        dec hl
+        ld a,(hl)
+        ld (de),a
+        inc de
+        xor a
+        ld (de),a
+        ld de,STRBUF
+        ld a,1
+        ld c,43h
+        call BDOS
+        or a
+        ret nz
+        ld a,b
+        ld (TMPB),a
+        ld de,PALBUF
+        ld hl,32
+        ld c,48h
+        call BDOS
+        ld a,(TMPB)
+        ld b,a
+        ld c,45h
+        call BDOS
+        ld hl,PALBUF
+        jp setpal
 
 li_close:
         ld a,(FH)
@@ -859,4 +941,92 @@ gp_n:   inc c
         ld a,c
         cp 32
         jr nz,gp_l
+        ret
+
+; remember the name of the current folder (last path part) in NAMEBUF
+savecur:
+        ld b,0
+        ld de,PATHBUF
+        ld c,59h
+        call BDOS
+        ld hl,PATHBUF
+        ld (TMPW2),hl
+sv_l:   ld a,(hl)
+        or a
+        jr z,sv_d
+        inc hl
+        cp '\'
+        jr nz,sv_l
+        ld (TMPW2),hl
+        jr sv_l
+sv_d:   ld hl,(TMPW2)
+        ld de,NAMEBUF
+        ld b,12
+sv_c:   ld a,(hl)
+        ld (de),a
+        or a
+        ret z
+        inc hl
+        inc de
+        djnz sv_c
+        xor a
+        ld (de),a
+        ret
+
+; select the folder named NAMEBUF in the list (after going up)
+selname:
+        ld hl,0
+sn_l:   ld de,(COUNT)
+        push hl
+        or a
+        sbc hl,de
+        pop hl
+        ret nc
+        push hl
+        call entaddr
+        ld a,(hl)
+        cp 1
+        jr nz,sn_n
+        inc hl
+        inc hl
+        ld de,NAMEBUF
+sn_c:   ld a,(de)
+        cp (hl)
+        jr nz,sn_n
+        or a
+        jr z,sn_f
+        inc hl
+        inc de
+        jr sn_c
+sn_n:   pop hl
+        inc hl
+        jr sn_l
+sn_f:   pop hl
+        ld (SEL),hl
+centertop:
+        ld hl,(SEL)
+        ld de,12
+        push hl
+        or a
+        sbc hl,de
+        pop hl
+        ld de,0
+        jr c,sn_t
+        ld de,5
+        or a
+        sbc hl,de
+        ex de,hl
+        ld hl,(COUNT)
+        ld bc,12
+        or a
+        sbc hl,bc
+        jr nc,sn_m
+        ld hl,0
+sn_m:   push hl
+        or a
+        sbc hl,de
+        pop hl
+        jr nc,sn_t
+        ex de,hl
+sn_t:   ld (TOP),de
         ret
