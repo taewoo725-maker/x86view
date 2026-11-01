@@ -1,0 +1,10 @@
+        include "defs.asm"
+        org 0100h
+        include "start.asm"
+        include "vdp.asm"
+        include "text.asm"
+        include "dos.asm"
+        include "ui.asm"
+        include "view.asm"
+        include "data.asm"
+        include "fontdata.asm"
