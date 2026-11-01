@@ -3,7 +3,7 @@ m_mem:   db 'Not enough memory.',13,10,'$'
 m_dos:   db 'X86VIEW needs MSX-DOS 2 or later.',13,10,'$'
 m_vram:  db 'X86VIEW needs 128KB VRAM (SCREEN 7).',13,10,'$'
 m_msx:   db 'X86VIEW needs MSX2 or later.',13,10,'$'
-m_usage: db 'X86VIEW 1.0.10 - picture viewer for MSX2/2+ (SCREEN 2-8,10-12)',13,10
+m_usage: db 'X86VIEW 1.0.11 - picture viewer for MSX2/2+ (SCREEN 2-8,10-12)',13,10
          db 'Usage: X86VIEW [drive:][path][file]',13,10
          db 13,10
          db 'Browser : Up/Down select, Enter view/open, Space slideshow',13,10
@@ -21,6 +21,7 @@ s_tr:    db 'TURBO R',0
 machtab: dw s_msx2,s_msx2p,s_tr
 s_items: db ' items',0
 s_dirtag: db '<DIR>',0
+s_cur:   db 'now',0
 s_huge:  db '>16M',0
 s_open:  db ' (',0
 s_close: db 'B)',0

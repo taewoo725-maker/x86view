@@ -302,38 +302,257 @@ ksp_ok: ld a,1
         jp view_start
 
 k_drive:
-        ld c,19h
-        call BDOS
-        ld (DRVB),a
-        ld c,18h
-        call BDOS
-        ld (TMPW2),hl
-        ld a,(DRVB)
+        call drvbuild
+        ld a,(DRVN)
+        cp 2
+        jp c,brw_loop
+        xor a
+        ld (DRVTOP),a
+        call drvwin
+dp_draw: call drvdraw
+dp_key: call waitkey
+        cp 1Bh
+        jr z,dp_cancel
+        cp 0Dh
+        jr z,dp_ok
+        cp 1Eh
+        jr z,dp_up
+        cp 1Fh
+        jr z,dp_dn
+        cp 'a'
+        jr c,dp_l1
+        cp 'z'+1
+        jr nc,dp_l1
+        and 0DFh
+dp_l1:  cp 'D'
+        jr z,dp_cancel
+        sub 'A'
+        jr c,dp_key
+        cp 16
+        jr nc,dp_key
         ld c,a
-        ld b,16
-kd_l:   inc c
-        ld a,c
-        and 0Fh
-        ld c,a
-        ld hl,(TMPW2)
+        ld a,(DRVN)
+        ld b,a
+        ld hl,DRVLIST
+        ld d,0
+dp_f:   ld a,(hl)
+        cp c
+        jr z,dp_found
+        inc hl
+        inc d
+        djnz dp_f
+        jr dp_key
+dp_found: ld a,d
+        ld (DRVSEL),a
+        jr dp_ok
+dp_up:  ld a,(DRVSEL)
         or a
-        jr z,kd_t
-        ld e,a
-kd_s:   srl h
-        rr l
-        dec e
-        jr nz,kd_s
-kd_t:   ld a,l
-        and 1
-        jr nz,kd_f
-        djnz kd_l
+        jr z,dp_key
+        dec a
+        ld (DRVSEL),a
+        call drvwin
+        jr dp_draw
+dp_dn:  ld a,(DRVSEL)
+        inc a
+        ld hl,DRVN
+        cp (hl)
+        jr nc,dp_key
+        ld (DRVSEL),a
+        call drvwin
+        jr dp_draw
+dp_cancel:
+        call drawlist
         jp brw_loop
-kd_f:   ld e,c
+dp_ok:  ld a,(DRVSEL)
+        ld e,a
+        ld d,0
+        ld hl,DRVLIST
+        add hl,de
+        ld e,(hl)
         ld c,0Eh
         call BDOS
         call scan
         call post_scan
         jp brw_loop
+
+; build DRVLIST/DRVN from the login vector, DRVSEL = current drive's index
+drvbuild:
+        ld c,19h
+        call BDOS
+        ld (DRVCUR),a
+        ld c,18h
+        call BDOS
+        ld (TMPW2),hl
+        xor a
+        ld (DRVN),a
+        ld (DRVSEL),a
+        ld c,0
+db_l:   ld hl,(TMPW2)
+        ld a,c
+        or a
+        jr z,db_t
+        ld b,a
+db_s:   srl h
+        rr l
+        djnz db_s
+db_t:   ld a,l
+        and 1
+        jr z,db_n
+        ld a,(DRVN)
+        ld e,a
+        ld d,0
+        ld hl,DRVLIST
+        add hl,de
+        ld (hl),c
+        ld b,a
+        ld a,(DRVCUR)
+        cp c
+        jr nz,db_c
+        ld a,b
+        ld (DRVSEL),a
+db_c:   ld a,b
+        inc a
+        ld (DRVN),a
+db_n:   inc c
+        ld a,c
+        cp 16
+        jr nz,db_l
+        ret
+
+; keep DRVSEL inside the 8-row window
+drvwin: ld a,(DRVSEL)
+        ld hl,DRVTOP
+        cp (hl)
+        jr nc,dw_1
+        ld (hl),a
+        ret
+dw_1:   sub 7
+        jr c,dw_2
+        cp (hl)
+        ret c
+        ret z
+        ld (hl),a
+dw_2:   ret
+
+; draw the drive pulldown under the path bar
+drvdraw:
+        ld a,(DRVN)
+        cp 9
+        jr c,dd_v
+        ld a,8
+dd_v:   ld (TMPB),a
+        ld b,a
+        add a,a
+        add a,b
+        add a,a
+        add a,a
+        ld l,a
+        ld h,0
+        ld de,8
+        add hl,de
+        ld (QH),hl
+        ld hl,10
+        ld (QX),hl
+        ld hl,38
+        ld (QY),hl
+        ld hl,88
+        ld (QW),hl
+        ld a,C_ACC
+        ld (QC),a
+        call rrdraw
+        ld hl,12
+        ld (QX),hl
+        ld hl,40
+        ld (QY),hl
+        ld hl,84
+        ld (QW),hl
+        ld hl,(QH)
+        ld de,-4
+        add hl,de
+        ld (QH),hl
+        ld a,C_CARD
+        ld (QC),a
+        call rrdraw
+        xor a
+        ld (VROW),a
+dr_row: ld a,(VROW)
+        ld hl,DRVTOP
+        add a,(hl)
+        ld (TMPW),a
+        ld hl,DRVN
+        cp (hl)
+        ret nc
+        ld a,(VROW)
+        ld b,a
+        add a,a
+        add a,b
+        add a,a
+        add a,a
+        add a,42
+        ld (RY0),a
+        ld a,C_CARD
+        ld (RBG),a
+        ld a,(TMPW)
+        ld hl,DRVSEL
+        cp (hl)
+        jr nz,dr_ns2
+        ld a,C_SEL
+        ld (RBG),a
+        ld hl,14
+        ld (QX),hl
+        ld a,(RY0)
+        ld l,a
+        ld h,0
+        ld (QY),hl
+        ld hl,80
+        ld (QW),hl
+        ld hl,12
+        ld (QH),hl
+        ld a,C_SEL
+        ld (QC),a
+        call rrdraw
+dr_ns2: ld a,(TMPW)
+        ld e,a
+        ld d,0
+        ld hl,DRVLIST
+        add hl,de
+        ld a,(hl)
+        ld c,a
+        add a,'A'
+        ld (STRB2),a
+        ld a,':'
+        ld (STRB2+1),a
+        xor a
+        ld (STRB2+2),a
+        ld hl,STRB2
+        ld a,C_TXT
+        push bc
+        ld c,12
+        call rtx3
+        pop bc
+        ld a,(DRVCUR)
+        cp c
+        jr nz,dr_nx
+        ld hl,s_cur
+        ld a,C_MUT
+        ld c,24
+        call rtx3
+dr_nx:  ld a,(VROW)
+        inc a
+        ld (VROW),a
+        cp 8
+        jp nz,dr_row
+        ret
+
+; like rtx but y = (RY0)+2 (RBG background)
+rtx3:   push af
+        ld a,(RY0)
+        add a,2
+        ld d,a
+        ld a,(RBG)
+        ld b,a
+        pop af
+        jp txs
 
 ; A=1 forward, 0FFh backward : move SEL to next picture (wraps)
 step_sel:

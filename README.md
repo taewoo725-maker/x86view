@@ -3,7 +3,7 @@
 **A SCREEN-mode picture viewer for MSX2 / MSX2+ / MSX turbo R, running under MSX-DOS 2 / Nextor.**
 **MSX2 이상 · MSX-DOS2 용 SCREEN 그림 뷰어**
 
-Version **V1.0.10** · `X86VIEW.COM` (about 8 KB)
+Version **V1.0.11** · `X86VIEW.COM` (about 8.5 KB)
 
 ![File browser](docs/browser.png)
 
@@ -83,7 +83,7 @@ X86VIEW /?                help
 | Enter / Right | view picture / open folder |
 | Left / BS | parent folder (the folder you came from stays selected) |
 | Space | slideshow from the selected picture |
-| D | next drive |
+| D | drive pulldown (Up/Down + Enter, or press the drive letter; ESC closes) |
 | A | show / hide non-picture files |
 | R | refresh |
 | ESC / Q | quit |
@@ -160,7 +160,7 @@ X86VIEW 는 표준 MSX2 / MSX2+ / MSX turbo R 인터페이스(슬롯 호출을 �
 
 `X86VIEW`, `X86VIEW 폴더`, `X86VIEW 폴더\파일.SC5`, `X86VIEW /?` (위 영어 표의 키와 같습니다).
 
-- 목록: ↑↓ 고르기, Enter 보기·폴더 열기, ←/BS 위 폴더, Space 슬라이드쇼, D 드라이브, A 그림 아닌 파일도 보기, ESC 끝
+- 목록: ↑↓ 고르기, Enter 보기·폴더 열기, ←/BS 위 폴더, Space 슬라이드쇼, D 드라이브 풀다운(↑↓ Enter 또는 드라이브 글자), A 그림 아닌 파일도 보기, ESC 끝
 - 그림 보기: →/← 다음/이전 그림, Space 슬라이드쇼, 1~9 간격(초), M 다른 SCREEN 으로 다시 해석, R 원래대로, ESC 목록으로
 
 ### 빌드

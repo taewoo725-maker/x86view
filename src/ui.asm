@@ -64,7 +64,7 @@ draw_title:
         db 'X86VIEW',0
         call tx
         db 47,4,C_MUT,C_PAN
-        db 'MSX picture viewer v1.0.10',0
+        db 'MSX picture viewer v1.0.11',0
         ; right chips
         ld hl,460
         ld (CHX),hl
@@ -129,6 +129,18 @@ draw_path:
         call mkpath
         ld hl,STRBUF
         ld a,C_TXT
+        ld b,C_PAN
+        ld c,20
+        ld d,24
+        call txs
+        ld a,(STRBUF)
+        ld (STRB2+30),a
+        ld a,':'
+        ld (STRB2+31),a
+        xor a
+        ld (STRB2+32),a
+        ld hl,STRB2+30
+        ld a,C_ACC
         ld b,C_PAN
         ld c,20
         ld d,24
