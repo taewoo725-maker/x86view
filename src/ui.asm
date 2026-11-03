@@ -64,7 +64,7 @@ draw_title:
         db 'X86VIEW',0
         call tx
         db 47,4,C_MUT,C_PAN
-        db 'MSX picture viewer v1.0.11',0
+        db 'MSX picture viewer v1.1.0',0
         ; right chips
         ld hl,460
         ld (CHX),hl
@@ -486,6 +486,8 @@ dd_oth: ld hl,s_file
 dd_img: ld hl,(EPTR)
         inc hl
         ld a,(hl)
+        cp V9MODE
+        jp z,v9_dd
         call mtptr
         ld (MTP),hl
         ld de,STRB2

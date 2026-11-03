@@ -66,8 +66,7 @@ fm_nx:  pop hl
         ld de,4
         add hl,de
         jr fm_l
-fm_no:  ld a,0FFh
-        ret
+fm_no:  jp v9_fm
 
 ; HL=new, DE=existing -> carry if new<existing
 cmpent: ld a,(de)

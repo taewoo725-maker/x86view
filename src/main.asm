@@ -6,5 +6,6 @@
         include "dos.asm"
         include "ui.asm"
         include "view.asm"
+        include "v9990.asm"
         include "data.asm"
         include "fontdata.asm"

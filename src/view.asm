@@ -772,6 +772,11 @@ loadimg:
         inc hl
         ld d,(hl)
         ld (FSZHI),de
+        ld hl,(CURENT)
+        inc hl
+        ld a,(hl)
+        cp V9MODE
+        jp z,v9_load
         ; mode
         ld a,(MODEOVR)
         cp 0FFh

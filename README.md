@@ -3,7 +3,7 @@
 **A SCREEN-mode picture viewer for MSX2 / MSX2+ / MSX turbo R, running under MSX-DOS 2 / Nextor.**
 **MSX2 이상 · MSX-DOS2 용 SCREEN 그림 뷰어**
 
-Version **V1.0.11** · `X86VIEW.COM` (about 8.5 KB)
+Version **V1.1.0** · `X86VIEW.COM` (about 9.2 KB)
 
 ![File browser](docs/browser.png)
 
@@ -22,6 +22,7 @@ Version **V1.0.11** · `X86VIEW.COM` (about 8.5 KB)
 - Slideshow, previous / next picture, drive switching, folder navigation, command-line start.
 - Pictures that need MSX2+ (SCREEN 10-12) are refused politely on MSX2.
 - No ROM font needed: the 6x8 font is built in.
+- **V9990 (Gfx9000) groundwork (V1.1.0):** when a V9990 answers on ports 60h-6Fh, `.G9B` pictures appear in the list with their size, colour mode, palette and packing shown in the details card. Showing them on the V9990 comes in the next step. Without a V9990 nothing changes.
 
 ![SCREEN 12](docs/view_screen12.png)
 

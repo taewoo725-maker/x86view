@@ -3,7 +3,7 @@ m_mem:   db 'Not enough memory.',13,10,'$'
 m_dos:   db 'X86VIEW needs MSX-DOS 2 or later.',13,10,'$'
 m_vram:  db 'X86VIEW needs 128KB VRAM (SCREEN 7).',13,10,'$'
 m_msx:   db 'X86VIEW needs MSX2 or later.',13,10,'$'
-m_usage: db 'X86VIEW 1.0.11 - picture viewer for MSX2/2+ (SCREEN 2-8,10-12)',13,10
+m_usage: db 'X86VIEW 1.1.0 - picture viewer for MSX2/2+ (SCREEN 2-8,10-12, V9990)',13,10
          db 'Usage: X86VIEW [drive:][path][file]',13,10
          db 13,10
          db 'Browser : Up/Down select, Enter view/open, Space slideshow',13,10
@@ -87,6 +87,8 @@ mt:
         dw 0FA80h,r_212,c_yjkrgb,0
         db 12,C_PUR,2,16
         dw 0,r_212,c_yjk,s_fixed
+        db 90,C_BLU,1,0
+        dw 0,r_v9,c_v9,s_pdef
 r_192:   db '256x192',0
 r_64:    db '64x48',0
 r_212:   db '256x212',0
@@ -97,7 +99,7 @@ c_4of:   db '4 of 512',0
 c_256:   db '256 fixed',0
 c_yjkrgb: db 'YJK + RGB',0
 c_yjk:   db '19268 YJK',0
-modelab: db 'SC2',0,'SC3',0,'SC4',0,'SC5',0,'SC6',0,'SC7',0,'SC8',0,'S10',0,'S11',0,'S12',0
+modelab: db 'SC2',0,'SC3',0,'SC4',0,'SC5',0,'SC6',0,'SC7',0,'SC8',0,'S10',0,'S11',0,'S12',0,'V90',0
 
 exttab:
         db 'SC2',0, 'GR2',0, 'S02',0

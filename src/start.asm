@@ -62,7 +62,8 @@ mn_hz:  ld (HZ),a
         jr nz,mn_nd
         xor a
         ld (dly1),a
-mn_nd:  call parseargs
+mn_nd:  call v9_detect
+        call parseargs
         call loadfont
         ld de,diskerr
         ld c,64h
