@@ -657,6 +657,7 @@ vs_prev: ld a,0FFh
 vs_err: ld hl,(ERRP)
         ld (MSGP),hl
 vs_back:
+        call v9_off
         xor a
         ld (SLIDE),a
         call setup_ui

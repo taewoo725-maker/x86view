@@ -107,6 +107,7 @@ qt_f:   call getkey
         rst 0
 
 restore_screen:
+        call v9_off
         ld a,(OLD8)
         ld (RG8SAV),a
         ld a,(OLD9)
